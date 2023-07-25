@@ -15,7 +15,7 @@ def printInstructions():
         print("\n\n")
 
 
-# This is some weird shit ngl. i dont like this bruh
+# This is some weird stuff ngl. i dont like this bruh
 class game:
     def __init__(self):
         self._p1_shape = None
@@ -30,7 +30,7 @@ class game:
         self._winner = None
         self._loop = False
     
-    # This is some pretty weird shit to initialize class properties
+    # This is some pretty weird stuff to initialize class properties
     @property
     def p1_shape(self):
         return self._p1_shape
@@ -275,10 +275,10 @@ class game:
             for j in range(3):
                 self._game_map[i][j] = 0
     
-    # Tbh, this is only while im learning python cuz idk wtf is going on with the list [ map in c++ (': ]
+    # Tbh, this is only while im learning python cuz idk what is going on with the list [ map in c++ (': ]
     def print_map(self): # Update: I ended up liking it a lot so I will keep it permanently.
         for i in range(3):
-            print(f"game_map[{0}][{i}]: {self._game_map[0][i]} \t game_map[{1}][{i}]: {self._game_map[1][i]} \t game_map[{2}][{i}]: {self._game_map[2][i]}\n ")
+            print(f"game_map[{0}][{i}]: {self._game_map[0][i]} \t game_map[{1}][{i}]: {self._game_map[1][i]} \t game_map[{2}][{i}]: {self._game_map[2][i]} ")
 
 # int main() // I'm coming from C++ so I'm going to have to get used to a lot of this.
 if __name__ == "__main__":
