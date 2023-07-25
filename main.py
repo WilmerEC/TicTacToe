@@ -14,6 +14,24 @@ def clearConsole():
 def printInstructions():
         print("\n\n")
 
+# I'll add validations once I have the whole thing up and running with correct inputs. 
+def evaluate_num_to_shape(value):
+    if value==1:
+        return "X"
+    elif value==2:
+        return "O"
+    elif value==0:
+        return " "
+
+# I'll add validations once I have the whole thing up and running with correct inputs. 
+def evaluate_shape_to_num( value):
+    if value=="X":
+        return 1
+    elif value=="O":
+        return 2
+    elif value==" " or value=="":
+        return 0
+
 
 # This is some weird stuff ngl. i dont like this bruh
 class game:
@@ -29,6 +47,7 @@ class game:
                             }
         self._winner = None
         self._loop = False
+        self._commands = [ "TL", "TM", "TR", "CL", "CM", "CR", "BL", "BM", "BR", "$help", "$quit"]
     
     # This is some pretty weird stuff to initialize class properties
     @property
@@ -55,6 +74,10 @@ class game:
     def loop(self):
         return self.loop
 
+    # There's no modifying this property so there's no need for a setter.
+    @property
+    def commands(self):
+        return self._commands
     # There's no modifying these values as of the current development plans for this program, -
     # - so I won't be adding a setter for this property
     @property
@@ -96,40 +119,23 @@ class game:
         # Setting them once validated
         self._p1_shape = p1_shape
         self._p2_shape = p2_shape
-        self.current_p = self.p1_shape # This can safely be done since the game loop will always start after this method
+        self.current_p = self.p1_shape # This can safely be done since the game loop will start after this method is completed
 
     def printMap(self):
         clearConsole()
         print("   +   +   ")
-        print(f" {self.evaluate_num_to_shape(self._game_map[0][0])} + {self.evaluate_num_to_shape(self._game_map[1][0])} + {self.evaluate_num_to_shape(self._game_map[2][0])} ")
+        print(f" {evaluate_num_to_shape(self._game_map[0][0])} + {evaluate_num_to_shape(self._game_map[1][0])} + {evaluate_num_to_shape(self._game_map[2][0])} ")
         print("   +   +   ")
         print(" ++++++++++")
         print("   +   +   ")
-        print(f" {self.evaluate_num_to_shape(self._game_map[0][1])} + {self.evaluate_num_to_shape(self._game_map[1][1])} + {self.evaluate_num_to_shape(self._game_map[2][1])} ")
+        print(f" {evaluate_num_to_shape(self._game_map[0][1])} + {evaluate_num_to_shape(self._game_map[1][1])} + {evaluate_num_to_shape(self._game_map[2][1])} ")
         print("   +   +   ")
         print(" ++++++++++")
         print("   +   +   ")
-        print(f" {self.evaluate_num_to_shape(self._game_map[0][2])} + {self.evaluate_num_to_shape(self._game_map[1][2])} + {self.evaluate_num_to_shape(self._game_map[2][2])} ")
+        print(f" {evaluate_num_to_shape(self._game_map[0][2])} + {evaluate_num_to_shape(self._game_map[1][2])} + {evaluate_num_to_shape(self._game_map[2][2])} ")
         print("   +   +   ")
         #print("   +   +   ")
 
-    # I'll add validations once I have the whole thing up and running with correct inputs. Might move this to helper functions
-    def evaluate_num_to_shape(self,value):
-        if value==1:
-            return "X"
-        elif value==2:
-            return "O"
-        elif value==0:
-            return " "
-
-    # I'll add validations once I have the whole thing up and running with correct inputs. Might move this to helper functions
-    def evaluate_shape_to_num(self, value):
-        if value=="X":
-            return 1
-        elif value=="O":
-            return 2
-        elif value==" " or value=="":
-            return 0
         
     def printHelp(self):
         print("\n\nInput follows this format: T - Top, M - Mid, B - Bottom, L - Left, C - Center, R - Right\nE.g.: TR: Top Right\n\n")
@@ -151,9 +157,6 @@ class game:
         while self._loop:
             
             user_input = self.appropiate_input() # need to add validation to this
-            #print(user_input)
-            #print(self.current_p)
-            #print(self._current_p)
             if user_input == "$quit":
                 option = input("\nDo you want to clear console when quitting? [Y]:")
                 print("\n\nQuitting game...\n\n")
@@ -195,10 +198,25 @@ class game:
                         sleep(2)
                         clearConsole()
 
-    # To-Do: Validate all the inputs to make sure whatever the player is passing in is correct     
-    def appropiate_input(self):    
-        return input(f"\n\n>>>>>> Currently playing [{self.current_p}]:")
-        
+    
+    ''' 
+    Disclaimer: This approach probably isn't ideal for bigger scale projects as it's complexity is:
+
+    - O(N): best case scenario  
+    and
+    - O(N*M): worst case scenario
+    
+    Since the list for this project is rather small and the project really is only a console project,
+    it'll do just fine, but I really want to put emphasis on the complexity of using it in a bigger scaled project.
+    ''' # To-Do: Validate all the inputs to make sure whatever the player is passing in is correct. Update: Done   
+    def appropiate_input(self):
+        user_input = input(f"\n\n>>>>>> Currently playing [{self.current_p}]:")
+        while True:
+            for i in range(len(self._commands)):
+                if user_input==self._commands[i]:
+                    return user_input
+            user_input = input("Wrong input! Try again with a correct one (type $help for command format):")
+           
     def check_board(self):
         diagonal_win = ( 
                             (self._game_map[0][0]!=0 and (self._game_map[0][0]==self._game_map[1][1] and self._game_map[0][0]==self._game_map[2][2])) or 
@@ -219,27 +237,27 @@ class game:
 
         if diagonal_win:
             if self._game_map[0][0] == self._game_map[2][2]:
-                self.winner = self.evaluate_num_to_shape(self._game_map[0][0])
+                self.winner = evaluate_num_to_shape(self._game_map[0][0])
             else:
-                self.winner = self.evaluate_num_to_shape(self._game_map[0][2])    
+                self.winner = evaluate_num_to_shape(self._game_map[0][2])    
             self._loop = False
             return True
         elif vertical_win:
             if self._game_map[0][0]==self._game_map[0][2]:
-                self.winner = self.evaluate_num_to_shape(self._game_map[0][0]) 
+                self.winner = evaluate_num_to_shape(self._game_map[0][0]) 
             elif self._game_map[1][0]==self._game_map[1][2]:
-                self.winner = self.evaluate_num_to_shape(self._game_map[1][0])
+                self.winner = evaluate_num_to_shape(self._game_map[1][0])
             else:
-                self.winner = self.evaluate_num_to_shape(self._game_map[2][0])
+                self.winner = evaluate_num_to_shape(self._game_map[2][0])
             self._loop = False
             return True
         elif horizontal_win:
             if self._game_map[0][0]==self._game_map[2][0]:
-                self.winner = self.evaluate_num_to_shape(self._game_map[0][0]) 
+                self.winner = evaluate_num_to_shape(self._game_map[0][0]) 
             elif self._game_map[0][1]==self._game_map[2][1]:
-                self.winner = self.evaluate_num_to_shape(self._game_map[1][0])
+                self.winner = evaluate_num_to_shape(self._game_map[1][0])
             else:
-                self.winner = self.evaluate_num_to_shape(self._game_map[2][2])
+                self.winner = evaluate_num_to_shape(self._game_map[2][2])
             self._loop = False
             return True
         #tie = True
@@ -259,16 +277,16 @@ class game:
         clearConsole()
         self.pickShape()
 
-
     def update_map_data(self, command, value):
         x, y = self._translation[command]
-        self._game_map[x][y] = self.evaluate_shape_to_num(value)
+        self._game_map[x][y] = evaluate_shape_to_num(value)
         # print(f"Value Updated: game_map[{x}][{y}]: {self._game_map[x][y]}") # Only uncomment this once the problem with the 2D list has been fixed
 
     # This is not exactly required by the program, but it helps me debug
     def print_map_value(self, command):
         x, y = self._translation[command]
         print(f"\ngame_map[{x}][{y}]: {self._game_map[x][y]}")
+    
     # I didn't plan this one, but its useful ngl
     def restart_map(self):
         for i in range(3):
